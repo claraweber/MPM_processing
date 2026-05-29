@@ -15,10 +15,10 @@ import sys
 
 pth = 'outputs/equivols'
 # read subjlist
-subjs = pd.read_csv(f'{pth}/scripts/surf_pipeline/subjlist.csv')['subjs'].values
+subjs = pd.read_csv(f'{pth}/scripts/surf_pipeline/subjlist.csv', dtype = 'str')['subjs'].values
 
 # define depths
-depths = [0.0, 0.07692307692307693, 0.15384615384615385, 0.23076923076923078, 0.3076923076923077, 0.38461538461538464, 0.46153846153846156, 0.5384615384615384, 0.6153846153846154, 0.6923076923076923, 0.7692307692307693, 0.8461538461538461,  0.9230769230769231, 1.0]
+depths = ['0.0', '0.07692307692307693', '0.15384615384615385', '0.23076923076923078', '0.3076923076923077', '0.38461538461538464', '0.46153846153846156', '0.5384615384615384', '0.6153846153846154', '0.6923076923076923', '0.7692307692307693', '0.8461538461538461',  '0.9230769230769231', '1.0']
 
 for mod in ['mt', 'r2']:
     # create empty lists
@@ -43,10 +43,10 @@ for mod in ['mt', 'r2']:
         # read csv
         subj_df = pd.read_csv(f'{pth}/{subj}_{mod}atdepths.csv')
         
-        moment1 = np.mean(subj_df[depths[1:13].values])
+        moment1 = np.mean(subj_df[depths[1:13]].values, axis = 1)
         data_moment1.append([subj, *moment1])
 
-        moment2 = np.std(subj_df[depths[1:13].values])
+        moment2 = np.std(subj_df[depths[1:13]].values, axis = 1)
         data_moment2.append([subj, *moment2])
 
         subj_pial = subj_df[depths[0]].values
