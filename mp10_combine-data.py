@@ -46,7 +46,7 @@ for mod in ['mt', 'r2']:
         moment1 = np.mean(subj_df[depths[1:13]].values, axis = 1)
         data_moment1.append([subj, *moment1])
 
-        moment2 = np.std(subj_df[depths[1:13]].values, axis = 1)
+        moment2 = np.std(subj_df[depths[1:13]].values, axis = 1, ddof = 1)
         data_moment2.append([subj, *moment2])
 
         subj_pial = subj_df[depths[0]].values
