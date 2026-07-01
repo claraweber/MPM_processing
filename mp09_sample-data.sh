@@ -31,13 +31,13 @@ for hemi in lh rh; do
 	mri_vol2surf --interp trilin --src "./tmp/${subj}-mt.mgz" --out "./tmp/${subj}_${hemi}_${depth}.mgh" --hemi $hemi --surf "equi${depth}.pial" --regheader $subj
 
 	# resample to fsa5
-	mri_surf2surf --srcsubject $subj --srcsurfval "./tmp/${subj}_${hemi}_${depth}.mgh" --trgsubject ico --trgicoorder 5 --trgsurfval "${outpth}/${subj}_${depth}_fsa5.${hemi}.mgh" --hemi $hemi --fwhm 5
+	mri_surf2surf --srcsubject $subj --srcsurfval "./tmp/${subj}_${hemi}_${depth}.mgh" --trgsubject ico --trgicoorder 5 --trgsurfval "${outpth}/${subj}_${depth}_fsa5.${hemi}.mgh" --hemi $hemi #--nsmooth-out 5
 	
 	# R2s
 	mri_vol2surf --interp trilin --src "./tmp/${subj}-r2.mgz" --out "./tmp/${subj}_${hemi}_${depth}_r2.mgh" --hemi $hemi --surf "equi${depth}.pial" --regheader $subj
 
 	# resample to fsa5
-	mri_surf2surf --srcsubject $subj --srcsurfval "./tmp/${subj}_${hemi}_${depth}_r2.mgh" --trgsubject ico --trgicoorder 5 --trgsurfval "${outpth}/${subj}_${depth}_r2_fsa5.${hemi}.mgh" --hemi $hemi --fwhm 5
+	mri_surf2surf --srcsubject $subj --srcsurfval "./tmp/${subj}_${hemi}_${depth}_r2.mgh" --trgsubject ico --trgicoorder 5 --trgsurfval "${outpth}/${subj}_${depth}_r2_fsa5.${hemi}.mgh" --hemi $hemi #--nsmoothout 5
 	done
 done
 
