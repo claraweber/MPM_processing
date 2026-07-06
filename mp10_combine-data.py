@@ -20,10 +20,17 @@ subjs = pd.read_csv(f'{pth}/scripts/surf_pipeline/subjlist.csv', dtype = 'str')[
 # define depths
 depths = ['0.0', '0.07692307692307693', '0.15384615384615385', '0.23076923076923078', '0.3076923076923077', '0.38461538461538464', '0.46153846153846156', '0.5384615384615384', '0.6153846153846154', '0.6923076923076923', '0.7692307692307693', '0.8461538461538461',  '0.9230769230769231', '1.0']
 
+def get_skew(data):
+    x = data[np.isfinite(data)]
+    mean = np.mean(x)
+    std = np.std(x)
+    return np.mean(((x-mean)/std)**3)
+
 for mod in ['mt', 'r2']:
     # create empty lists
     data_moment1 = []
     data_moment2 = []
+    data_moment3 = []
     data_pial = []
     data_d1 = []
     data_d2 = []
@@ -48,6 +55,9 @@ for mod in ['mt', 'r2']:
 
         moment2 = np.std(subj_df[depths[1:13]].values, axis = 1, ddof = 1)
         data_moment2.append([subj, *moment2])
+
+        moment3 = get_skew(subj_df[depths[1:13]].values)
+        data_moment3.append([subj, moment3])
 
         subj_pial = subj_df[depths[0]].values
         data_pial.append([subj, *subj_pial])
@@ -94,6 +104,7 @@ for mod in ['mt', 'r2']:
     # save csvs
     pd.DataFrame(data_moment1).to_csv(f'{pth}/{mod}_moment1.csv')
     pd.DataFrame(data_moment2).to_csv(f'{pth}/{mod}_moment2.csv')
+    pd.DataFrame(data_moment3).to_csv(f'{pth}/{mod}_moment3.csv')
     pd.DataFrame(data_pial).to_csv(f'{pth}/{mod}_pial.csv')
     pd.DataFrame(data_white).to_csv(f'{pth}/{mod}_white.csv')
     pd.DataFrame(data_d1).to_csv(f'{pth}/{mod}_depth1.csv')
