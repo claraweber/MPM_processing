@@ -1,7 +1,7 @@
-# Intracortical in-vivo profiling of myelin and iron proxies in Borderline Personality Disorder - Processing and analysis of Multiparametric Mapping-MRI data 
+# Intracortical In-vivo Profiling of Myelin and Iron proxies in Borderline Personality Disorder - Processing and Analysis of Multiparametric Mapping-MRI Data 
 
-Preregistration: [Link to OSF](https://osf.io/h9b4n/)
-Preperint/Paper: tbd
+Preregistration: [Link to OSF](https://osf.io/h9b4n/). 
+Preprint/Paper: tbd
 
 **Scripts**:  
 - mp01-mp10 are main pipeline for preprocessing
