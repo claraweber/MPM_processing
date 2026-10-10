@@ -140,3 +140,4 @@ short_colnames =['ID', 'SocialDeprivationIndex', 'Gender', 'Age', 'Referral_Diag
 df_short = df_fgen[short_colnames].copy()
 df_short.to_csv(f'{pth}/relevant_data_short.csv')
 # %%
+

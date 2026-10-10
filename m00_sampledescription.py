@@ -12,7 +12,7 @@ import seaborn as sbn
 import matplotlib.pyplot as plt
 
 # load data - presorted
-df = pd.read_csv('../relevant_data_aims13.csv')
+df = pd.read_csv(f'{pth}/relevant_data_aims13.csv')
 
 #%%
 # cleanup operations
@@ -83,4 +83,27 @@ ax[3].tick_params(axis='x', labelrotation=90)
 sbn.histplot(data = df[df['Medication5_type']!='9999'], y = 'Medication5_type', hue = 'Referral_Diagnosis', alpha = 1, multiple = 'dodge', palette = colors,  common_norm=False, stat = 'percent', discrete = True, legend = False, ax = ax[4])
 ax[4].tick_params(axis='x', labelrotation=90)
 fig.savefig('medicationtype.svg', bbox_inches = 'tight')
+# %%
+med_cols = ['Medication1_type', 'Medication2_type', 'Medication3_type',
+            'Medication4_type', 'Medication5_type']
+
+# reshape wide -> long: one row per (subject, medication slot)
+long_df = df.melt(
+    id_vars='Referral_Diagnosis',
+    value_vars=med_cols,
+    value_name='Medication_type'
+).drop(columns='variable')
+
+# drop the "no medication" sentinel
+long_df = long_df[long_df['Medication_type'] != '9999']
+
+# counts by diagnosis, plus an "All" column/row for totals
+med_table = pd.crosstab(
+    long_df['Medication_type'],
+    long_df['Referral_Diagnosis'],
+    margins=True,
+    margins_name='All'
+)
+
+med_table
 # %%
