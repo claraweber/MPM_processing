@@ -120,11 +120,11 @@ for col in range(5):
     df_fgen[f'Medication{col+1}'] = df_fgen[f'Medication{col+1}'].replace(rename_dict_med).values.copy()
     df_fgen[f'Medication{col+1}_type'] = df_fgen[f'Medication{col+1}'].replace(type_dict_med)
 #%%
-# add composite scores
+# add composite scores - already flipped
 for c in [col for col in df_fgen.columns if 'CTQ' in col]:
     df_fgen[c] = df_fgen[c].replace(9999, np.nan)
 
-CTQ_sum = np.nansum(np.array(df_fgen[[c for c in df_fgen.columns if 'CTQ' in c]].astype('f')), axis = 1)
+CTQ_sum = np.sum(np.array(df_fgen[[c for c in df_fgen.columns if 'CTQ' in c]].astype('f')), axis = 1)
 df_fgen['CTQ_sum'] = CTQ_sum
 
 df_fgen['BMI'] = df_fgen['Weight_kg'].values.astype('f')/((df_fgen['Height_cm'].values.astype('f')*0.01)**2)
@@ -140,4 +140,49 @@ short_colnames =['ID', 'SocialDeprivationIndex', 'Gender', 'Age', 'Referral_Diag
 df_short = df_fgen[short_colnames].copy()
 df_short.to_csv(f'{pth}/relevant_data_short.csv')
 # %%
+## demographics in excluded subjects
+subjects_excl = list(pd.read_csv(f'{pth}/subjlist_excl.csv')['Subject ID'].values)
+df_fsubjexcl = df_raw[df_raw['ID'].isin(subjects_excl)]
 
+# sanity check 
+print(f"{'all good' if len(set(subjects_excl) - set(df_raw['ID'])) == 0 else 'oh no'}")
+
+# add composite scores - already flipped
+for c in [col for col in df_fsubjexcl.columns if 'CTQ' in col]:
+    df_fsubjexcl[c] = df_fsubjexcl[c].replace('9999', np.nan)
+    df_fsubjexcl[c] = df_fsubjexcl[c].replace(9999, np.nan)
+
+CTQ_sum = np.sum(np.array(df_fsubjexcl[[c for c in df_fsubjexcl.columns if 'CTQ' in c]].astype('f')), axis = 1)
+
+df_fsubjexcl['CTQ_sum'] = CTQ_sum
+df_fsubjexcl['Age'].replace(9999, np.nan, inplace = True)
+df_fsubjexcl['SocialDeprivationIndex'].replace(9999, np.nan, inplace = True)
+
+def getsummary(df):
+    # split in samples
+    df_bpd = df[df['Referral_Diagnosis'] == 1].copy()
+    df_aspd = df[df['Referral_Diagnosis'] == 2].copy()
+    df_crc = df[df['Referral_Diagnosis'] == 3].copy()
+    df_mdd = df[df['Referral_Diagnosis'] == 4].copy()
+
+    # distribution of diagnoses
+    np.unique(df['Referral_Diagnosis'], return_counts = True)
+
+    # get summary stats
+    summary = []
+    names = ['all', 'BPD', 'ASPD', 'MDD', 'CRC']
+    for s, subgroup in enumerate([df, df_bpd, df_aspd, df_mdd, df_crc]):
+        gs = []
+        gs.append(names[s])
+        gs.append(len(subgroup))
+        gs.append(f"{np.nanmean(subgroup['Age'].values.astype('f')):.3f}±{np.nanstd(subgroup['Age'].values.astype('f')):.3f}")
+        gs.append(f"{len(subgroup[subgroup['Gender']==2])*100/len(subgroup):.2f}%")
+        gs.append(f"{np.nanmedian(subgroup['CTQ_sum'].values.astype('f'))} [{np.nanmin(subgroup['CTQ_sum'].values.astype('f'))}-{np.nanmax(subgroup['CTQ_sum'].values.astype('f'))}]")
+        gs.append(f"{subgroup['CTQ_sum'].isna().sum()*100/len(subgroup):.2f}%")
+        gs.append(f"{np.nanmedian(subgroup['SocialDeprivationIndex'].values.astype('f'))} [{np.nanmin(subgroup['SocialDeprivationIndex'].values.astype('f'))}-{np.nanmax(subgroup['SocialDeprivationIndex'].values.astype('f'))}]")
+        gs.append(f"{subgroup['SocialDeprivationIndex'].isna().sum()*100/len(subgroup):.2f}%")
+        summary.append(gs)
+    return(pd.DataFrame(summary, columns = ['group', 'n', 'mean±sd age', 'fem', 'median CTQ [range]', 'CTQ nans', 'median SDI [range]', 'SDI nans']))
+# %%
+getsummary(df_fsubjexcl)
+# %%

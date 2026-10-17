@@ -12,7 +12,7 @@ import seaborn as sbn
 import matplotlib.pyplot as plt
 
 # load data - presorted
-df = pd.read_csv(f'{pth}/relevant_data_aims13.csv')
+df = pd.read_csv(f'{pth}/relevant_data_aims13_x.csv')
 
 #%%
 # cleanup operations
@@ -38,7 +38,7 @@ for s, subgroup in enumerate([df, df_bpd, df_aspd, df_mdd, df_crc]):
     gs.append(f"{len(subgroup[subgroup['Gender']==2])*100/len(subgroup):.2f}%")
     gs.append(f"{np.nanmedian(subgroup['CTQ_sum'].values.astype('f'))} [{np.nanmin(subgroup['CTQ_sum'].values.astype('f'))}-{np.nanmax(subgroup['CTQ_sum'].values.astype('f'))}]")
     gs.append(f"{subgroup['CTQ_sum'].isna().sum()*100/len(subgroup):.2f}%")
-    gs.append(f"{np.nanmedian(subgroup['SocialDeprivationIndex'].values.astype('f'))} [{np.nanmin(subgroup['SocialDeprivationIndex'].values.astype('f'))}-{np.nanmax(subgroup['CTQ_sum'].values.astype('f'))}]")
+    gs.append(f"{np.nanmedian(subgroup['SocialDeprivationIndex'].values.astype('f'))} [{np.nanmin(subgroup['SocialDeprivationIndex'].values.astype('f'))}-{np.nanmax(subgroup['SocialDeprivationIndex'].values.astype('f'))}]")
     gs.append(f"{subgroup['SocialDeprivationIndex'].isna().sum()*100/len(subgroup):.2f}%")
     summary.append(gs)
 
