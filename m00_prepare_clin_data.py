@@ -8,7 +8,6 @@ Clara Weber MD
 # housekeeping
 import numpy as np
 import pandas as pd
-from factor_analyzer import FactorAnalyzer
 
 pth = '/Users/cweber/Desktop/MPI/MPM/London'
 #%%
@@ -120,10 +119,21 @@ for col in range(5):
     df_fgen[f'Medication{col+1}'] = df_fgen[f'Medication{col+1}'].replace(rename_dict_med).values.copy()
     df_fgen[f'Medication{col+1}_type'] = df_fgen[f'Medication{col+1}'].replace(type_dict_med)
 #%%
-# add composite scores - already flipped
 for c in [col for col in df_fgen.columns if 'CTQ' in col]:
     df_fgen[c] = df_fgen[c].replace(9999, np.nan)
+    df_fgen[c] = df_fgen[c].replace('9999', np.nan)
+#%%
+# flip 
+CTQ_toflip = [2, 5, 10, 13, 16, 19, 22, 26, 28]
 
+for s in CTQ_toflip:
+    orig_values = np.array(df_fgen[f'CTQ{int(s)}'].values.copy(), dtype = 'f')
+    mask_nonans = ~ df_fgen[f'CTQ{int(s)}'].isna()
+    flip_values = np.full(orig_values.shape, np.nan)
+    flip_values[mask_nonans] = 5 - orig_values[mask_nonans]
+    df_fgen[f'CTQ{int(s)}'] = flip_values
+#%%
+# add composite scores - already flipped
 CTQ_sum = np.sum(np.array(df_fgen[[c for c in df_fgen.columns if 'CTQ' in c]].astype('f')), axis = 1)
 df_fgen['CTQ_sum'] = CTQ_sum
 
@@ -134,7 +144,7 @@ df_fgen['BMI'] = df_fgen['Weight_kg'].values.astype('f')/((df_fgen['Height_cm'].
 df_fgen['SocialDeprivationIndex'].replace(9999, np.nan, inplace = True)
 #%%
 # save
-df_fgen.to_csv(f'{pth}/relevant_data_aims13.csv')
+df_fgen.to_csv(f'{pth}/relevant_data_aims13_x.csv')
 # %%
 short_colnames =['ID', 'SocialDeprivationIndex', 'Gender', 'Age', 'Referral_Diagnosis', 'CTQ_sum']
 df_short = df_fgen[short_colnames].copy()
@@ -184,5 +194,5 @@ def getsummary(df):
         summary.append(gs)
     return(pd.DataFrame(summary, columns = ['group', 'n', 'mean±sd age', 'fem', 'median CTQ [range]', 'CTQ nans', 'median SDI [range]', 'SDI nans']))
 # %%
-getsummary(df_fsubjexcl)
+getsummary(df_fgen)
 # %%

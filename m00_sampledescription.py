@@ -12,7 +12,7 @@ import seaborn as sbn
 import matplotlib.pyplot as plt
 
 # load data - presorted
-df = pd.read_csv(f'{pth}/relevant_data_aims13_x.csv')
+df = pd.read_csv(f'{pth}/relevant_data_aims13.csv')
 
 #%%
 # cleanup operations
@@ -42,7 +42,7 @@ for s, subgroup in enumerate([df, df_bpd, df_aspd, df_mdd, df_crc]):
     gs.append(f"{subgroup['SocialDeprivationIndex'].isna().sum()*100/len(subgroup):.2f}%")
     summary.append(gs)
 
-pd.DataFrame(summary, columns = ['group', 'n', 'mean±sd age', 'fem', 'median CTQ [range]', 'CTQ nans', 'median SDI [range]', 'SDI nans']).to_csv('demographics.csv')
+#'.to_csv('demographics.csv')
 # %%
 # visualize basic demographics
 #ax[0].set_xticklabels(['BPD', 'ASPD', 'CRC', 'MDD'])
