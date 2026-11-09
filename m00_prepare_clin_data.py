@@ -124,7 +124,7 @@ for c in [col for col in df_fgen.columns if 'CTQ' in col]:
     df_fgen[c] = df_fgen[c].replace('9999', np.nan)
 #%%
 # flip 
-CTQ_toflip = [2, 5, 10, 13, 16, 19, 22, 26, 28]
+CTQ_toflip = [2, 5, 7, 13, 19, 26, 28]
 
 for s in CTQ_toflip:
     orig_values = np.array(df_fgen[f'CTQ{int(s)}'].values.copy(), dtype = 'f')
